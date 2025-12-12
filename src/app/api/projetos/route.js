@@ -2,6 +2,8 @@ import dbConnect from '@/lib/mongodb';
 import Projeto from '@/models/Projeto';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 // GET: Busca TODOS os projetos (pra lista do Admin e da Home)
 export async function GET() {
   try {
