@@ -2,19 +2,19 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  throw new Error(
-    'Opa, meu consagrado! Tu esqueceu de definir a variável MONGODB_URI no arquivo .env.local'
-  );
-}
-
 let cached = global.mongoose;
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+if (!chached) {
+  cached = global.mongoose = {conn: null, promise: null};
 }
 
 async function dbConnect() {
+  if (!proccess.env.MONGODB_URI) {
+    throw new Error(
+      "Você esqueceu de definir a variável MONGODB_URI no arquivo .env.local"
+    );
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
