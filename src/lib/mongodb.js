@@ -9,7 +9,7 @@ if (!cached) {
 }
 
 async function dbConnect() {
-  if (!proccess.env.MONGODB_URI) {
+  if (!process.env.MONGODB_URI) {
     throw new Error(
       "Você esqueceu de definir a variável MONGODB_URI no arquivo .env.local"
     );
