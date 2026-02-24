@@ -4,7 +4,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 let cached = global.mongoose;
 
-if (!chached) {
+if (!cached) {
   cached = global.mongoose = {conn: null, promise: null};
 }
 
