@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, userPathname } from 'next/navigation';
 import { Github, ExternalLink, ArrowLeft, Trash2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function ProjetoDetalhes() {
   const params = useParams();
   const router = useRouter();
+  const pathname = userPathname(); //inicializei porque adicionei no import
   const [projeto, setProjeto] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const ehAdmin = pathname.startsWhit('/admin');
 
   useEffect(() => {
     async function fetchProjeto() {
@@ -56,7 +59,7 @@ export default function ProjetoDetalhes() {
             'success'
           );
           // Redireciona de volta para a Home depois de apagar
-          router.push('/#projetos');
+          router.push(ehAdmin ? '/admin' : '/#projetos');
         } else {
           Swal.fire('Erro!', 'Não consegui apagar.', 'error');
         }
