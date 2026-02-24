@@ -1,18 +1,21 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter, userPathname } from 'next/navigation';
+// 1. Adicionei o usePathname aqui nas importações
+import { useParams, useRouter, usePathname } from 'next/navigation'; 
 import { Github, ExternalLink, ArrowLeft, Trash2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function ProjetoDetalhes() {
   const params = useParams();
   const router = useRouter();
-  const pathname = userPathname(); //inicializei porque adicionei no import
+  const pathname = usePathname(); // 2. Inicializei o cabra aqui
+  
   const [projeto, setProjeto] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const ehAdmin = pathname.startsWhit('/admin');
+  // Verifico se a URL atual começa com /admin
+  const ehAdmin = pathname.startsWith('/admin');
 
   useEffect(() => {
     async function fetchProjeto() {
@@ -32,8 +35,8 @@ export default function ProjetoDetalhes() {
     fetchProjeto();
   }, [params.id]);
 
-  // --- FUNÇÃO DE DELETAR COM SWEETALERT ---
   const handleDelete = async () => {
+    // ... (sua função handleDelete continua a mesma, sem mexer em nada)
     const result = await Swal.fire({
       title: 'Tem certeza?',
       text: "Se apagar esse projeto, não tem volta!",
@@ -53,13 +56,8 @@ export default function ProjetoDetalhes() {
         const data = await res.json();
 
         if (data.success) {
-          await Swal.fire(
-            'Apagado!',
-            'O projeto foi pro espaço.',
-            'success'
-          );
-          // Redireciona de volta para a Home depois de apagar
-          router.push(ehAdmin ? '/admin' : '/#projetos');
+          await Swal.fire('Apagado!', 'O projeto foi pro espaço.', 'success');
+          router.push(ehAdmin ? '/admin' : '/#projetos'); // Redireciona conforme quem apagou
         } else {
           Swal.fire('Erro!', 'Não consegui apagar.', 'error');
         }
@@ -76,20 +74,22 @@ export default function ProjetoDetalhes() {
   return (
     <main style={{ minHeight: '100vh', padding: '2rem 1rem', maxWidth: '1000px', margin: '0 auto', color: 'white' }}>
       
-      {/* Cabeçalho com Voltar e Deletar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <a href="/#projetos" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', color: '#999', textDecoration: 'none' }}>
-          <ArrowLeft size={20} /> Voltar para Home
+        <a href={ehAdmin ? "/admin" : "/#projetos"} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', color: '#999', textDecoration: 'none' }}>
+          <ArrowLeft size={20} /> Voltar {ehAdmin ? 'para o Painel' : 'para Home'}
         </a>
 
-        {/* Botão de Deletar (Só aparece se o projeto carregou) */}
-        <button onClick={handleDelete} style={btnStyleDanger}>
-            <Trash2 size={18} /> Apagar Projeto
-        </button>
+        {/* 3. A MÁGICA ACONTECE AQUI: O botão só renderiza se for Admin */}
+        {ehAdmin && (
+          <button onClick={handleDelete} style={btnStyleDanger}>
+              <Trash2 size={18} /> Apagar Projeto
+          </button>
+        )}
       </div>
 
       <h1 style={{ fontSize: '3rem', color: '#ccff00', marginBottom: '1rem', lineHeight: '1.1' }}>{projeto.titulo}</h1>
 
+      {/* ... resto do seu código (tecnologias, imagem, descrição...) */}
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '2rem' }}>
         {projeto.tecnologias.map((tech, index) => (
           <span key={index} style={{ background: '#222', padding: '5px 15px', borderRadius: '20px', color: '#ccff00', border: '1px solid #333' }}>
@@ -129,6 +129,7 @@ export default function ProjetoDetalhes() {
   );
 }
 
+// ... seus estilos (btnStylePrimary, btnStyleSecondary, btnStyleDanger) continuam iguais
 const btnStylePrimary = {
   display: 'flex', alignItems: 'center', gap: '10px',
   background: '#ccff00', color: 'black', padding: '15px 30px',
